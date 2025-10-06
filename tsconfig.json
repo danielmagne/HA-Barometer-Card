@@ -1,22 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2021",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "outDir": "dist",
-    "rootDir": "src",
-    "declaration": false,
-    "allowJs": false,
-    "strict": true,
-    "noImplicitAny": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": false,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": false,
-    "lib": ["ES2020", "DOM"],
-    "types": ["custom-card-helpers"]
+    "useDefineForClassFields": false,
+    "strict": true,
+    "skipLibCheck": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "typeRoots": ["src/types", "node_modules/@types"]
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*",
+    "src/types/**/*"
+  ]
 }

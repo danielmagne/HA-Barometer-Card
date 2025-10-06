@@ -5,7 +5,7 @@ import type {
   LovelaceCard,
   LovelaceCardEditor,
   HassEntity,
-} from 'custom-card-helpers';
+} from './types/custom-card-helpers';
 import type { HaBarometerCardConfig } from './types';
 
 export type { HaBarometerCardConfig } from './types';
