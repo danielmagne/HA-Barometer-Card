@@ -17,23 +17,25 @@
     "home-assistant",
     "lovelace",
     "custom-card",
-    "lit"
+    "lit",
+    "barometer",
+    "weather"
   ],
   "author": "Daniel Magne Gundersen",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-alias": "^5.1.1",
+    "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.4",
-    "eslint": "^8.56.0",
-    "rollup": "^3.29.4",
-    "typescript": "^5.9.3"
+    "eslint": "^9.11.0",
+    "rollup": "^4.22.0",
+    "typescript": "^5.6.3"
   },
   "dependencies": {
-    "lit": "^2.8.0",
+    "lit": "^3.2.0",
     "tslib": "^2.8.1"
   }
 }
