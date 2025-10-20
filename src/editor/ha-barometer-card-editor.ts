@@ -1,12 +1,26 @@
 import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
+import { fireEvent, HomeAssistant, LovelaceCardEditor, getCardHelpers } from "custom-card-helpers";
 import type { HaBarometerCardConfig } from "../types";
 
 @customElement("ha-barometer-card-editor")
 export class HaBarometerCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: HaBarometerCardConfig;
+  private _helpers?: any; // card helpers cache
+
+  /** Load HA helpers safely once */
+  public async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+    if (!this._helpers) {
+      try {
+        this._helpers = await getCardHelpers();
+        this.requestUpdate();
+      } catch (err) {
+        console.warn("HA-Barometer-Card: Failed to load helpers", err);
+      }
+    }
+  }
 
   public setConfig(config: HaBarometerCardConfig): void {
     this._config = { min_pressure: 960, max_pressure: 1040, ...config };
@@ -16,12 +30,12 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
     if (!this.hass || !this._config) return html``;
     const cfg = this._config;
 
-    // If ha-entity-picker isn’t registered yet, render a no-loop fallback.
-    const hasEntityPicker = !!customElements.get("ha-entity-picker");
+    // Only render ha-entity-picker if helpers loaded (so it works with autocomplete)
+    const canUsePicker = !!this._helpers && !!customElements.get("ha-entity-picker");
 
     return html`
       <div class="form">
-        ${hasEntityPicker
+        ${canUsePicker
           ? html`
               <ha-entity-picker
                 .hass=${this.hass}
@@ -34,7 +48,7 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
             `
           : html`
               <ha-textfield
-                label="Entity (type manually if picker not ready)"
+                label="Entity"
                 .value=${cfg.entity ?? ""}
                 @change=${(e: Event) =>
                   this._handleEntityChanged({
