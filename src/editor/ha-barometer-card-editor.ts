@@ -1,51 +1,39 @@
-import { css, html, LitElement, TemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { fireEvent, HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
-import type { HaBarometerCardConfig } from '../types';
+import { css, html, LitElement, TemplateResult } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
+import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
+import type { HaBarometerCardConfig } from "../types";
 
-// Runtime check so Lovelace loads ha-entity-picker correctly
-if (!customElements.get('ha-entity-picker')) {
-  document.createElement('ha-entity-picker');
-}
-
-@customElement('ha-barometer-card-editor')
+@customElement("ha-barometer-card-editor")
 export class HaBarometerCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: HaBarometerCardConfig;
 
   public setConfig(config: HaBarometerCardConfig): void {
-    this._config = {
-      min_pressure: 960,
-      max_pressure: 1040,
-      ...config,
-    };
+    this._config = { min_pressure: 960, max_pressure: 1040, ...config };
   }
 
-	protected render(): TemplateResult {
-	  if (!this.hass || !this._config) {
-		return html``;
-	  }
+  protected render(): TemplateResult {
+    if (!this.hass || !this._config) return html``;
 
-	  // ✅ Proper, non-blocking lazy load
-	  if (!customElements.get("ha-entity-picker") && (window as any).loadCardHelpers) {
-		(window as any)
-		  .loadCardHelpers()
-		  .then(() => this.requestUpdate())
-		  .catch(() => {});
-	  }
+    // ✅ Correct lazy loader — non-blocking
+    if (!customElements.get("ha-entity-picker") && (window as any).loadCardHelpers) {
+      (window as any)
+        .loadCardHelpers()
+        .then(() => this.requestUpdate())
+        .catch(() => {});
+    }
 
-	  const config = this._config;
-
-	  return html`
-		<div class="form">
-		  <ha-entity-picker
-			.hass=${this.hass}
-			.label=${this._localize('ui.panel.lovelace.editor.card.generic.entity')}
-			.value=${config.entity}
-			.includeDomains=${['sensor']}
-			allow-custom-entity
-			@value-changed=${this._handleEntityChanged}
-		  ></ha-entity-picker>
+    const cfg = this._config;
+    return html`
+      <div class="form">
+        <ha-entity-picker
+          .hass=${this.hass}
+          .label=${this._localize("ui.panel.lovelace.editor.card.generic.entity")}
+          .value=${cfg.entity}
+          .includeDomains=${["sensor"]}
+          allow-custom-entity
+          @value-changed=${this._handleEntityChanged}
+        ></ha-entity-picker>
 
         <!-- Name -->
         <ha-textfield
