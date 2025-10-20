@@ -8,17 +8,6 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: HaBarometerCardConfig;
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    // ✅ Load helpers once when component is attached
-    if (!customElements.get("ha-entity-picker") && (window as any).loadCardHelpers) {
-      (window as any)
-        .loadCardHelpers()
-        .then(() => this.requestUpdate())
-        .catch(() => {});
-    }
-  }
-
   public setConfig(config: HaBarometerCardConfig): void {
     this._config = { min_pressure: 960, max_pressure: 1040, ...config };
   }
@@ -27,26 +16,40 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
     if (!this.hass || !this._config) return html``;
     const cfg = this._config;
 
+    // If ha-entity-picker isn’t registered yet, render a no-loop fallback.
+    const hasEntityPicker = !!customElements.get("ha-entity-picker");
+
     return html`
       <div class="form">
-        <!-- Entity -->
-        <ha-entity-picker
-          .hass=${this.hass}
-          .label=${this._localize("ui.panel.lovelace.editor.card.generic.entity")}
-          .value=${cfg.entity}
-          .includeDomains=${["sensor"]}
-          allow-custom-entity
-          @value-changed=${this._handleEntityChanged}
-        ></ha-entity-picker>
+        ${hasEntityPicker
+          ? html`
+              <ha-entity-picker
+                .hass=${this.hass}
+                .label=${this._localize("ui.panel.lovelace.editor.card.generic.entity")}
+                .value=${cfg.entity}
+                .includeDomains=${["sensor"]}
+                allow-custom-entity
+                @value-changed=${this._handleEntityChanged}
+              ></ha-entity-picker>
+            `
+          : html`
+              <ha-textfield
+                label="Entity (type manually if picker not ready)"
+                .value=${cfg.entity ?? ""}
+                @change=${(e: Event) =>
+                  this._handleEntityChanged({
+                    stopPropagation() {},
+                    detail: { value: (e.currentTarget as HTMLInputElement).value },
+                  } as any)}
+              ></ha-textfield>
+            `}
 
-        <!-- Name -->
         <ha-textfield
           .label=${this._localize("ui.panel.lovelace.editor.card.generic.name")}
           .value=${cfg.name ?? ""}
           @change=${this._handleTextChange("name")}
         ></ha-textfield>
 
-        <!-- Minimum pressure -->
         <ha-textfield
           label="Minimum pressure"
           helper="Dial lower bound (hPa)"
@@ -55,7 +58,6 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
           @change=${this._handleNumberChange("min_pressure")}
         ></ha-textfield>
 
-        <!-- Maximum pressure -->
         <ha-textfield
           label="Maximum pressure"
           helper="Dial upper bound (hPa)"
@@ -64,7 +66,6 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
           @change=${this._handleNumberChange("max_pressure")}
         ></ha-textfield>
 
-        <!-- Needle color -->
         <ha-textfield
           label="Needle color"
           helper="Any valid CSS color (e.g. red, #ff0000, var(--accent-color))"
@@ -77,7 +78,7 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
 
   private _handleEntityChanged(event: CustomEvent): void {
     event.stopPropagation();
-    const value = event.detail.value;
+    const value = (event.detail as any)?.value;
     this._updateConfig({ entity: value ?? "" });
   }
 
