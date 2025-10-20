@@ -26,8 +26,8 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
 		return html``;
 	  }
 
-	  // 🔧 Ensure HA editor components (like ha-entity-picker) are available
-	  if (!customElements.get('ha-entity-picker') && (window as any).loadCardHelpers) {
+	  // ✅ Proper, non-blocking lazy load
+	  if (!customElements.get("ha-entity-picker") && (window as any).loadCardHelpers) {
 		(window as any)
 		  .loadCardHelpers()
 		  .then(() => this.requestUpdate())
