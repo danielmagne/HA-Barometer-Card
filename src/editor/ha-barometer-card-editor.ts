@@ -21,24 +21,31 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
     };
   }
 
-  protected render(): TemplateResult {
-    if (!this.hass || !this._config) {
-      return html``;
-    }
+	protected render(): TemplateResult {
+	  if (!this.hass || !this._config) {
+		return html``;
+	  }
 
-    const config = this._config;
+	  // 🔧 Ensure HA editor components (like ha-entity-picker) are available
+	  if (!customElements.get('ha-entity-picker') && (window as any).loadCardHelpers) {
+		(window as any)
+		  .loadCardHelpers()
+		  .then(() => this.requestUpdate())
+		  .catch(() => {});
+	  }
 
-    return html`
-      <div class="form">
-        <!-- Entity Picker -->
-        <ha-entity-picker
-          .hass=${this.hass}
-          .label=${this._localize('ui.panel.lovelace.editor.card.generic.entity')}
-          .value=${config.entity}
-          .includeDomains=${['sensor']}
-          allow-custom-entity
-          @value-changed=${this._handleEntityChanged}
-        ></ha-entity-picker>
+	  const config = this._config;
+
+	  return html`
+		<div class="form">
+		  <ha-entity-picker
+			.hass=${this.hass}
+			.label=${this._localize('ui.panel.lovelace.editor.card.generic.entity')}
+			.value=${config.entity}
+			.includeDomains=${['sensor']}
+			allow-custom-entity
+			@value-changed=${this._handleEntityChanged}
+		  ></ha-entity-picker>
 
         <!-- Name -->
         <ha-textfield
