@@ -245,3 +245,4 @@ function t(t,e,s,i){var r,n=arguments.length,o=n<3?e:null===i?i=Object.getOwnPro
       }
     `}};t([dt({attribute:!1})],ft.prototype,"hass",void 0),t([pt()],ft.prototype,"_config",void 0),ft=t([lt("ha-barometer-card-editor")],ft);var _t=Object.freeze({__proto__:null,get HaBarometerCardEditor(){return ft}});export{ut as HaBarometerCard};
 //# sourceMappingURL=ha-barometer-card.js.map
+// rebuild Mon Oct 20 23:11:43 WEDT 2025
