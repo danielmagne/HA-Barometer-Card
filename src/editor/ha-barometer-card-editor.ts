@@ -8,22 +8,25 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: HaBarometerCardConfig;
 
-  public setConfig(config: HaBarometerCardConfig): void {
-    this._config = { min_pressure: 960, max_pressure: 1040, ...config };
-  }
-
-  protected render(): TemplateResult {
-    if (!this.hass || !this._config) return html``;
-
-    // ✅ Correct lazy loader — non-blocking
+  connectedCallback(): void {
+    super.connectedCallback();
+    // ✅ Load helpers once when component is attached
     if (!customElements.get("ha-entity-picker") && (window as any).loadCardHelpers) {
       (window as any)
         .loadCardHelpers()
         .then(() => this.requestUpdate())
         .catch(() => {});
     }
+  }
 
+  public setConfig(config: HaBarometerCardConfig): void {
+    this._config = { min_pressure: 960, max_pressure: 1040, ...config };
+  }
+
+  protected render(): TemplateResult {
+    if (!this.hass || !this._config) return html``;
     const cfg = this._config;
+
     return html`
       <div class="form">
         <!-- Entity -->
@@ -90,8 +93,7 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
     return (event: Event): void => {
       event.stopPropagation();
       const target = event.currentTarget as HTMLInputElement;
-      const value = target.value;
-      const num = value === "" ? undefined : Number(value);
+      const num = target.value === "" ? undefined : Number(target.value);
       this._updateConfig({
         [key]: num === undefined || Number.isNaN(num) ? undefined : num,
       });
@@ -100,12 +102,7 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
 
   private _updateConfig(update: Partial<HaBarometerCardConfig>): void {
     if (!this._config) return;
-
-    const newConfig: HaBarometerCardConfig = {
-      ...this._config,
-      ...update,
-    };
-
+    const newConfig: HaBarometerCardConfig = { ...this._config, ...update };
     this._config = newConfig;
     fireEvent(this, "config-changed", { config: newConfig });
   }
