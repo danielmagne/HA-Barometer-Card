@@ -26,6 +26,7 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
     const cfg = this._config;
     return html`
       <div class="form">
+        <!-- Entity -->
         <ha-entity-picker
           .hass=${this.hass}
           .label=${this._localize("ui.panel.lovelace.editor.card.generic.entity")}
@@ -37,9 +38,9 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
 
         <!-- Name -->
         <ha-textfield
-          .label=${this._localize('ui.panel.lovelace.editor.card.generic.name')}
-          .value=${config.name ?? ''}
-          @change=${this._handleTextChange('name')}
+          .label=${this._localize("ui.panel.lovelace.editor.card.generic.name")}
+          .value=${cfg.name ?? ""}
+          @change=${this._handleTextChange("name")}
         ></ha-textfield>
 
         <!-- Minimum pressure -->
@@ -47,8 +48,8 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
           label="Minimum pressure"
           helper="Dial lower bound (hPa)"
           type="number"
-          .value=${String(config.min_pressure ?? 960)}
-          @change=${this._handleNumberChange('min_pressure')}
+          .value=${String(cfg.min_pressure ?? 960)}
+          @change=${this._handleNumberChange("min_pressure")}
         ></ha-textfield>
 
         <!-- Maximum pressure -->
@@ -56,16 +57,16 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
           label="Maximum pressure"
           helper="Dial upper bound (hPa)"
           type="number"
-          .value=${String(config.max_pressure ?? 1040)}
-          @change=${this._handleNumberChange('max_pressure')}
+          .value=${String(cfg.max_pressure ?? 1040)}
+          @change=${this._handleNumberChange("max_pressure")}
         ></ha-textfield>
 
         <!-- Needle color -->
         <ha-textfield
           label="Needle color"
           helper="Any valid CSS color (e.g. red, #ff0000, var(--accent-color))"
-          .value=${config.needle_color ?? ''}
-          @change=${this._handleTextChange('needle_color')}
+          .value=${cfg.needle_color ?? ""}
+          @change=${this._handleTextChange("needle_color")}
         ></ha-textfield>
       </div>
     `;
@@ -74,7 +75,7 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
   private _handleEntityChanged(event: CustomEvent): void {
     event.stopPropagation();
     const value = event.detail.value;
-    this._updateConfig({ entity: value ?? '' });
+    this._updateConfig({ entity: value ?? "" });
   }
 
   private _handleTextChange(key: keyof HaBarometerCardConfig) {
@@ -85,12 +86,12 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
     };
   }
 
-  private _handleNumberChange(key: 'min_pressure' | 'max_pressure') {
+  private _handleNumberChange(key: "min_pressure" | "max_pressure") {
     return (event: Event): void => {
       event.stopPropagation();
       const target = event.currentTarget as HTMLInputElement;
       const value = target.value;
-      const num = value === '' ? undefined : Number(value);
+      const num = value === "" ? undefined : Number(value);
       this._updateConfig({
         [key]: num === undefined || Number.isNaN(num) ? undefined : num,
       });
@@ -106,12 +107,12 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
     };
 
     this._config = newConfig;
-    fireEvent(this, 'config-changed', { config: newConfig });
+    fireEvent(this, "config-changed", { config: newConfig });
   }
 
   private _localize(key: string): string {
     const localize = this.hass?.localize;
-    return typeof localize === 'function' ? localize.call(this.hass, key) : key;
+    return typeof localize === "function" ? localize.call(this.hass, key) : key;
   }
 
   static get styles() {
@@ -132,6 +133,6 @@ export class HaBarometerCardEditor extends LitElement implements LovelaceCardEdi
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ha-barometer-card-editor': HaBarometerCardEditor;
+    "ha-barometer-card-editor": HaBarometerCardEditor;
   }
 }

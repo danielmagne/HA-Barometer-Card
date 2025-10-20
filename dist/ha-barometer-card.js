@@ -194,6 +194,7 @@ function t(t,e,s,i){var r,n=arguments.length,o=n<3?e:null===i?i=Object.getOwnPro
       }
     `}};t([dt({attribute:!1})],ut.prototype,"hass",void 0),t([pt()],ut.prototype,"_config",void 0),ut=t([lt("ha-barometer-card")],ut),window.customCards=window.customCards||[],window.customCards.push({type:"ha-barometer-card",name:"HA Barometer Card",description:"Classic-inspired barometer gauge for pressure sensors."});let ft=class extends ot{setConfig(t){this._config={min_pressure:960,max_pressure:1040,...t}}render(){if(!this.hass||!this._config)return I``;!customElements.get("ha-entity-picker")&&window.loadCardHelpers&&window.loadCardHelpers().then(()=>this.requestUpdate()).catch(()=>{});const t=this._config;return I`
       <div class="form">
+        <!-- Entity -->
         <ha-entity-picker
           .hass=${this.hass}
           .label=${this._localize("ui.panel.lovelace.editor.card.generic.entity")}
@@ -206,7 +207,7 @@ function t(t,e,s,i){var r,n=arguments.length,o=n<3?e:null===i?i=Object.getOwnPro
         <!-- Name -->
         <ha-textfield
           .label=${this._localize("ui.panel.lovelace.editor.card.generic.name")}
-          .value=${config.name??""}
+          .value=${t.name??""}
           @change=${this._handleTextChange("name")}
         ></ha-textfield>
 
@@ -215,7 +216,7 @@ function t(t,e,s,i){var r,n=arguments.length,o=n<3?e:null===i?i=Object.getOwnPro
           label="Minimum pressure"
           helper="Dial lower bound (hPa)"
           type="number"
-          .value=${String(config.min_pressure??960)}
+          .value=${String(t.min_pressure??960)}
           @change=${this._handleNumberChange("min_pressure")}
         ></ha-textfield>
 
@@ -224,7 +225,7 @@ function t(t,e,s,i){var r,n=arguments.length,o=n<3?e:null===i?i=Object.getOwnPro
           label="Maximum pressure"
           helper="Dial upper bound (hPa)"
           type="number"
-          .value=${String(config.max_pressure??1040)}
+          .value=${String(t.max_pressure??1040)}
           @change=${this._handleNumberChange("max_pressure")}
         ></ha-textfield>
 
@@ -232,7 +233,7 @@ function t(t,e,s,i){var r,n=arguments.length,o=n<3?e:null===i?i=Object.getOwnPro
         <ha-textfield
           label="Needle color"
           helper="Any valid CSS color (e.g. red, #ff0000, var(--accent-color))"
-          .value=${config.needle_color??""}
+          .value=${t.needle_color??""}
           @change=${this._handleTextChange("needle_color")}
         ></ha-textfield>
       </div>
